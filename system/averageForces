@@ -1,0 +1,29 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  9
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+
+averageForces
+{
+    type            fieldAverage;
+
+    libs            ("fieldFunctionObjects");
+
+    outputControl   outputTime;
+
+    fields
+    (
+        forces
+        {
+            mean            on;
+            prime2Mean      off;
+            base            time;
+        }
+    );
+}
+
+
+// ************************************************************************* //
