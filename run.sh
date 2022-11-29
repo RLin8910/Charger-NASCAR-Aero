@@ -10,3 +10,5 @@ mpirun -np 6 simpleFoam -parallel
 
 reconstructParMesh -constant
 reconstructPar
+
+python running_average.py
