@@ -46,6 +46,11 @@ if __name__ == '__main__':
         end_step = 1000
         print("Missing or invalid time step range, using defaults of %s to %s." % (start_step, end_step))
 
-    average, stdev = run(start_step, end_step)
+    if len(sys.argv) > 3:
+        file_path = sys.argv[3]
+    else:
+        file_path = DEFAULT_FILE_PATH
+
+    average, stdev = run(start_step, end_step, file_path)
     print('Average: ', average)
     print('Stdev: ', stdev)
