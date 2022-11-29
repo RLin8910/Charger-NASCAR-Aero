@@ -1,1 +1,5 @@
 runtime/
+runtime*/
+data/
+foam_log.txt
+*.pyc
