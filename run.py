@@ -72,6 +72,10 @@ if __name__ == '__main__':
         # copy raw data file to save
         path_tuple = (raw_data_path,)+params
         shutil.copyfile(running_average.DEFAULT_FILE_PATH, '%s/%f,%f.dat' %path_tuple)
+        print('Drag: %f' %(average[0],))
+        print('Sideforce: %f' %(average[1],))
+        print('Lift:%f' %(average[2],))
+        print('\r\n')
 
         #print time information
         print('Finished iteration %i' %(i,))
