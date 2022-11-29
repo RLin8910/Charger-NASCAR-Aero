@@ -49,7 +49,6 @@ functions
     #include "cuttingPlane"
     #include "forceCoeffs"
     #include "forces"
-    #include "averageForces"
 }
 
 
