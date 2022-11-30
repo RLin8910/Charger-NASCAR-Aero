@@ -80,7 +80,7 @@ if __name__ == '__main__':
         #print time information
         print('Finished iteration %i' %(i,))
         iter_end_time = time.time()
-        print('Time elapsed this iteration: %fs' %(iter_end_time-iter_end_time,))
+        print('Time elapsed this iteration: %fs' %(iter_end_time-iter_start_time,))
         print('Total time elapsed: %fs' %(iter_end_time-start_time,))
 
     print('\r\n\r\n----------------------------------')
