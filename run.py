@@ -150,9 +150,9 @@ if __name__ == '__main__':
         print('Using user-input parameters')
     except:
         target_drag = 420
-        target_lift = -350
+        target_lift = -800
         step_size = 0.05
-        temp = .1
+        temp = 5
         iters = 1000
         print('Invalid parameters, using defaults')
     optimize_target(target_drag, target_lift, step_size, temp, iters, '--fake-sim' in sys.argv)
