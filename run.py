@@ -43,13 +43,15 @@ if __name__ == '__main__':
     if not os.path.exists(averages_file):
         with open(averages_file, 'w') as file:
             file.write("Param1,Param2,Drag,Sideforce,Lift,Stdev Drag,Stdev Sideforce,Stdev Lift")
-
+    
+    # track runtime
     start_time = time.time()
 
     for i in range(iters):  
         print('\r\n\r\n----------------------------------')
         print('Beginning iteration %i' %(i,))
         iter_start_time = time.time()
+
         # todo: modify params
         params = (-1,-1)
         print('Using params: %f,%f' %params)
@@ -57,18 +59,21 @@ if __name__ == '__main__':
         if os.path.exists(dst):
             shutil.rmtree(dst)
         shutil.copytree(src, dst)
+
+        # create 3d model from blender cli with params
         print('Creating model...')
         subprocess.call(('blender', '-b', '-noaudio', './assets/design_space.blend', \
             '-P', 'export_model.py', '--', str(params[0]), str(params[1]), model_dst))
         
+        # run simulation in runtime dir
         print('Running simulation...')
         wd = os.getcwd()
         with open(foam_log_path, 'w') as foam_log:
             os.chdir(dst)
             subprocess.call(('sh', './run.sh'), stdout=foam_log)
         os.chdir(wd)
-
         print('Simulation complete, processing data...')
+        
         # calculate running averages
         average, stdev = running_average.run(avg_window_start, avg_window_end)
         data_tuple = params + tuple(average) + tuple(stdev)
@@ -77,6 +82,8 @@ if __name__ == '__main__':
         # copy raw data file to save
         path_tuple = (raw_data_path,)+params
         shutil.copyfile(running_average.DEFAULT_FILE_PATH, '%s/%f,%f.dat' %path_tuple)
+
+        # print results of this iteration
         print('Drag: %f' %(average[0],))
         print('Sideforce: %f' %(average[1],))
         print('Lift:%f' %(average[2],))
