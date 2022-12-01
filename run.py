@@ -165,7 +165,7 @@ if __name__ == '__main__':
         target_drag = 420
         target_lift = -800
         step_size = 0.05
-        temp = 5000
+        temp = 10000
         iters = 100
         print('Invalid parameters, using defaults')
     optimize_target(target_drag, target_lift, step_size, temp, iters, '--fake-sim' in sys.argv)

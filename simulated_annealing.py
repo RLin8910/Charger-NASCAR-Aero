@@ -16,8 +16,9 @@ def check_accept(cur_eval, can_eval, cur_iter, temp):
     diff = can_eval - cur_eval
     t = temp / float(cur_iter + 1)
     metropolis = numpy.exp(-diff / t)
+    print(f'Using metropolis {metropolis}')
 
-    return diff < 0 or numpy.random.rand() < numpy.exp(-diff / t)
+    return diff < 0 or numpy.random.rand() < metropolis
 
 def objective(target, val):
     dist = numpy.linalg.norm(numpy.array(target) - numpy.array(val))
