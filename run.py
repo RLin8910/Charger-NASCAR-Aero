@@ -69,10 +69,11 @@ def optimize_target(target_drag, target_lift, step_size, temp, iters, fake_simul
                         accept_line = split
 
                 if accept_line:
-                    cur_params = (float(last_line[1]), float(last_line[2]))
-                    drag = float(last_line[3])
-                    lift = float(last_line[5])
+                    cur_params = (float(accept_line[1]), float(accept_line[2]))
+                    drag = float(accept_line[3])
+                    lift = float(accept_line[5])
                     cur_eval = simulated_annealing.objective((target_drag, target_lift), (drag, lift))
+                    
                 print(f'Resuming with parameters {cur_params} and error {cur_eval} on iteration {start_iter}.')
             except:
                 print('Found averages file, but unable to pull previous parameters...')
