@@ -3,3 +3,5 @@ runtime*/
 data/
 *_log.txt
 *.pyc
+assets/edited.blend
+.DS_Store
