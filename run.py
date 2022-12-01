@@ -43,12 +43,15 @@ def optimize_target(target_drag, target_lift, step_size, temp, iters, fake_simul
     cur_eval = float('inf')
     # the iteration we are beginning on. Can be nonzero if resuming a simulation
     start_iter = 0
+    # track runtime
+    start_time = time.time()
+    record_time = time.time()
 
     # create output data file
     if not os.path.exists(averages_file):
         with open(averages_file, 'w') as file:
-            line1 = "Iteration,Param1,Param2,Drag,Sideforce,Lift,Stdev Drag,Stdev Sideforce,Stdev Lift,Error"
-            line2 = f"\nTarget,--,--,{target_drag},--,{target_lift},--,--,--,0"
+            line1 = "Iteration,Param1,Param2,Drag,Sideforce,Lift,Stdev Drag,Stdev Sideforce,Stdev Lift,Error,Time"
+            line2 = f"\nTarget,--,--,{target_drag},--,{target_lift},--,--,--,0,0"
             file.writelines((line1,line2))
     else:
         # pull initial params from existing file to allow saving progress and continuing
@@ -57,6 +60,7 @@ def optimize_target(target_drag, target_lift, step_size, temp, iters, fake_simul
             last_line = file.readlines()[-1].split(',')
             try:
                 start_iter = int(last_line[0]) + 1
+                record_time -= float(last_line[10])
                 cur_params = (float(last_line[1]), float(last_line[2]))
                 drag = float(last_line[3])
                 lift = float(last_line[4])
@@ -64,9 +68,6 @@ def optimize_target(target_drag, target_lift, step_size, temp, iters, fake_simul
                 print(f'Resuming with parameters {cur_params} and error {cur_eval} on iteration {start_iter}.')
             except:
                 print('Found averages file, but unable to pull previous parameters...')
-    
-    # track runtime
-    start_time = time.time()
 
     for i in range(start_iter, iters+start_iter):  
         print('\r\n\r\n----------------------------------')
@@ -111,11 +112,6 @@ def optimize_target(target_drag, target_lift, step_size, temp, iters, fake_simul
 
         eval = simulated_annealing.objective((target_drag, target_lift), (average[0], average[2]))
 
-        # write data to file
-        data_tuple = (i,) + params + tuple(average) + tuple(stdev) + (eval,)
-        with open(averages_file, 'a') as file:
-                file.write("\n%i,%f,%f,%f,%f,%f,%f,%f,%f,%f" %data_tuple)
-
         # print results of this iteration
         print('Drag: %f' %(average[0],))
         print('Sideforce: %f' %(average[1],))
@@ -135,6 +131,11 @@ def optimize_target(target_drag, target_lift, step_size, temp, iters, fake_simul
         print('Time elapsed this iteration: %fs' %(iter_end_time-iter_start_time,))
         print('Total time elapsed: %fs' %(iter_end_time-start_time,))
 
+        # write data to file
+        data_tuple = (i,) + params + tuple(average) + tuple(stdev) + (eval,iter_end_time-record_time)
+        with open(averages_file, 'a') as file:
+                file.write("\n%i,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f" %data_tuple)
+
     print('\r\n\r\n----------------------------------')
     print('Finished %i iterations in %fs' %(iters,time.time()-start_time))
 
@@ -152,7 +153,7 @@ if __name__ == '__main__':
         target_drag = 420
         target_lift = -800
         step_size = 0.05
-        temp = 5
+        temp = 1
         iters = 1000
         print('Invalid parameters, using defaults')
     optimize_target(target_drag, target_lift, step_size, temp, iters, '--fake-sim' in sys.argv)
