@@ -2,11 +2,13 @@ import shutil
 import os
 import sys
 import subprocess
-import running_average
 import time
+
+import running_average
 
 src = './template'
 dst = './runtime'
+model_dst = './runtime/constant/geometry/model.obj'
 
 avg_window_start = 450
 avg_window_end = 500
@@ -49,12 +51,15 @@ if __name__ == '__main__':
         print('Beginning iteration %i' %(i,))
         iter_start_time = time.time()
         # todo: modify params
-        params = (0,0)
+        params = (-1,-1)
         print('Using params: %f,%f' %params)
         # create new runtime directory
         if os.path.exists(dst):
             shutil.rmtree(dst)
         shutil.copytree(src, dst)
+        print('Creating model...')
+        subprocess.call(('blender', '-b', '-noaudio', './assets/design_space.blend', \
+            '-P', 'export_model.py', '--', str(params[0]), str(params[1]), model_dst))
         
         print('Running simulation...')
         wd = os.getcwd()

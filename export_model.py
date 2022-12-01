@@ -36,4 +36,4 @@ def export_model(params, export_path='./model.obj'):
 
 if __name__ == '__main__':
     argv = sys.argv[sys.argv.index("--") + 1 :]
-    export_model(argv)
+    export_model(argv[:2], argv[2])

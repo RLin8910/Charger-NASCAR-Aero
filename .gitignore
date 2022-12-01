@@ -1,7 +1,7 @@
-runtime/
+.DS_Store
 runtime*/
 data/
+assets/edited.blend
 *_log.txt
 *.pyc
-assets/edited.blend
-.DS_Store
+*.blend1
