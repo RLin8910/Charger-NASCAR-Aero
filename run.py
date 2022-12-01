@@ -50,21 +50,29 @@ def optimize_target(target_drag, target_lift, step_size, temp, iters, fake_simul
     # create output data file
     if not os.path.exists(averages_file):
         with open(averages_file, 'w') as file:
-            line1 = "Iteration,Param1,Param2,Drag,Sideforce,Lift,Stdev Drag,Stdev Sideforce,Stdev Lift,Error,Time"
-            line2 = f"\nTarget,--,--,{target_drag},--,{target_lift},--,--,--,0,0"
+            line1 = "Iteration,Param1,Param2,Drag,Sideforce,Lift,Stdev Drag,Stdev Sideforce,Stdev Lift,Error,Time,Accepted"
+            line2 = f"\nTarget,--,--,{target_drag},--,{target_lift},--,--,--,0,0,True"
             file.writelines((line1,line2))
     else:
         # pull initial params from existing file to allow saving progress and continuing
         with open(averages_file, 'r') as file:
             # get last line in the file
-            last_line = file.readlines()[-1].split(',')
+            lines = file.readlines()
+            last_line = lines[-1].split(',')
             try:
                 start_iter = int(last_line[0]) + 1
                 record_time -= float(last_line[10])
-                cur_params = (float(last_line[1]), float(last_line[2]))
-                drag = float(last_line[3])
-                lift = float(last_line[4])
-                cur_eval = simulated_annealing.objective((target_drag, target_lift), (drag, lift))
+                accept_line = None
+                for line in lines:
+                    split = line.split(',')
+                    if 'true' in split[-1].lower():
+                        accept_line = split
+
+                if accept_line:
+                    cur_params = (float(last_line[1]), float(last_line[2]))
+                    drag = float(last_line[3])
+                    lift = float(last_line[5])
+                    cur_eval = simulated_annealing.objective((target_drag, target_lift), (drag, lift))
                 print(f'Resuming with parameters {cur_params} and error {cur_eval} on iteration {start_iter}.')
             except:
                 print('Found averages file, but unable to pull previous parameters...')
@@ -120,7 +128,8 @@ def optimize_target(target_drag, target_lift, step_size, temp, iters, fake_simul
         print('\r\n')
 
         # determine whether to accept this candidate
-        if simulated_annealing.check_accept(cur_eval, eval, i, temp):
+        accept = simulated_annealing.check_accept(cur_eval, eval, i, temp)
+        if accept:
             # accept candidate
             cur_eval = eval
             cur_params = params
@@ -132,12 +141,14 @@ def optimize_target(target_drag, target_lift, step_size, temp, iters, fake_simul
         print('Total time elapsed: %fs' %(iter_end_time-start_time,))
 
         # write data to file
-        data_tuple = (i,) + params + tuple(average) + tuple(stdev) + (eval,iter_end_time-record_time)
+        data_tuple = (i,) + params + tuple(average) + tuple(stdev) + (eval,iter_end_time-record_time,accept)
         with open(averages_file, 'a') as file:
-                file.write("\n%i,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f" %data_tuple)
+                file.write("\n%i,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%s" %data_tuple)
 
     print('\r\n\r\n----------------------------------')
     print('Finished %i iterations in %fs' %(iters,time.time()-start_time))
+    print(f'Current params: {cur_params}')
+    print(f'Current error: {cur_eval}')
 
 if __name__ == '__main__':
     # get args    
@@ -153,7 +164,7 @@ if __name__ == '__main__':
         target_drag = 420
         target_lift = -800
         step_size = 0.05
-        temp = 1
-        iters = 1000
+        temp = 5000
+        iters = 100
         print('Invalid parameters, using defaults')
     optimize_target(target_drag, target_lift, step_size, temp, iters, '--fake-sim' in sys.argv)
