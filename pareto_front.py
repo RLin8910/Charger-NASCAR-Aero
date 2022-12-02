@@ -11,7 +11,8 @@ def pareto_indices(points: np.ndarray) -> np.ndarray:
         'The input array must represent a set of 2D points'
 
     # Sort the points by both properties
-    points = points[np.lexsort((points[:,1], points[:,0]))]
+    sorted_indices = np.lexsort((points[:,1], points[:,0]))
+    points = points[sorted_indices]
 
     pareto_indices = [0]        # List of indices to Pareto-optimal points (in the sorted array)
     pareto_x = points[0, 0]     # X value of the last Pareto-optimal point
@@ -29,7 +30,7 @@ def pareto_indices(points: np.ndarray) -> np.ndarray:
             pareto_y = points[i, 1]
 
     # Return the Pareto front
-    return pareto_indices
+    return sorted_indices[pareto_indices]
 
 def pareto_front(points: np.ndarray) -> np.ndarray:
     '''
@@ -45,24 +46,25 @@ def export_pareto_front(input_path, export_path):
     Iteration, Param1, Param2, Drag, Sideforce, Downforce, ...
     '''
     with open(input_path, 'r') as file:
-        points = np.empty((0,4))
+        points = np.empty((0,5))
         for line in file.readlines():
             split = line.split(',')
             # ignore column labels
             if not split[0].isnumeric():
                 continue
-            points = np.append(points, np.array([[float(split[1]), float(split[2]), float(split[3]), float(split[5])]]), axis=0)
+            points = np.append(points, np.array([[int(split[0]), float(split[1]), float(split[2]), float(split[3]), float(split[5])]]),\
+                axis=0)
     
-    data_points = points[:,2:]
+    data_points = points[:,3:]
     # Get indices so that the parameters can be included in the output without being part of the pareto front
     # computation
     indices = pareto_indices(data_points)
     pareto_front = points[indices]
 
     with open(export_path, 'w') as export:
-        lines = ['Param1,Param2,Drag,Lift']
+        lines = ['Iter,Param1,Param2,Drag,Lift']
         for point in pareto_front:
-            lines.append(f'\n{point[0]},{point[1]},{point[2]},{point[3]}')
+            lines.append(f'\n{point[0]},{point[1]},{point[2]},{point[3]},{point[4]}')
         export.writelines(lines)
 
 if __name__ == '__main__':

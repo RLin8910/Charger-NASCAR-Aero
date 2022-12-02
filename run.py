@@ -20,6 +20,7 @@ averages_file = './data/averages.csv'
 raw_data_path = './data/forces'
 
 foam_log_path = './foam_log.txt'
+error_log_path = './error_log.txt'
 
 tkwargs = bayesian_optimization.tkwargs
 
@@ -181,4 +182,15 @@ if __name__ == '__main__':
         batches = 25
         initial_sample_size = 10
         print('Invalid parameters, using defaults')
-    optimize_target(batches, initial_sample_size, '--fake-sim' in sys.argv)
+    
+    # Retry simulation if it encounters an error at any point
+    while True:
+        try:
+            optimize_target(batches, initial_sample_size, '--fake-sim' in sys.argv)
+            break
+        except Exception as e:
+            print('Exception occured: ')
+            print(e)
+            with open(error_log_path, 'a') as error_log:
+                error_log.writelines(['\n',str(e)])
+            print('Retrying...')
