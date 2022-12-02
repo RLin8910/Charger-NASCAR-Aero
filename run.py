@@ -142,8 +142,8 @@ def run_step(cur_iter, new_params, start_time, record_time, \
         # calculate running averages
         average, stdev = running_average.run(avg_window_start, avg_window_end)
         # copy raw data file to save
-        path_tuple = (raw_data_path,)+new_params
-        shutil.copyfile(running_average.DEFAULT_FILE_PATH, '%s/%f,%f.dat' %path_tuple)
+        path_tuple = (raw_data_path,)+(float(new_params[0]), float(new_params[1]))
+        shutil.copyfile(running_average.DEFAULT_FILE_PATH, '%s/(%f,%f).dat' %path_tuple)
 
     # print results of this iteration
     print('Drag: %f' %(average[0],))
