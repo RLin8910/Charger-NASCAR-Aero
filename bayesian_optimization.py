@@ -1,3 +1,8 @@
+###
+# Adapted from the BoTorch Multi-Objective Bayesian Optimization Tutorial:
+# https://botorch.org/tutorials/multi_objective_bo
+###
+
 import torch
 from botorch import fit_gpytorch_mll
 from botorch.sampling.samplers import SobolQMCNormalSampler

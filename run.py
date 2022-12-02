@@ -169,7 +169,6 @@ def run_step(cur_iter, new_params, start_time, record_time, \
     return (data_x, data_obj)
 
 if __name__ == '__main__':
-    # get args    
     try:
         batches = int(sys.argv[1])
         initial_sample_size = int(sys.argv[2])
