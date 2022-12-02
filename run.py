@@ -126,8 +126,9 @@ def run_step(cur_iter, new_params, start_time, record_time, \
 
         # create 3d model from blender cli with params
         print('Creating model...\n')
+        # Convert to float and then str since torch float64 are not supported by Blender
         subprocess.call(('blender', '-b', '-noaudio', './assets/design_space.blend', \
-        '-P', 'export_model.py', '--', str(new_params[0]), str(new_params[1]), model_dst))
+        '-P', 'export_model.py', '--', str(float(new_params[0])), str(float(new_params[1])), model_dst))
 
         # run simulation in runtime dir
         print('\nRunning simulation...')
