@@ -159,14 +159,14 @@ def run_step(cur_iter, new_params, start_time, record_time, \
     print('Time elapsed this iteration: %fs' %(iter_end_time-iter_start_time,))
     print('Total time elapsed: %fs' %(iter_end_time-start_time,))
 
+    # check invalid values
+    if average[0] > 1000:
+        raise ValueError('Divergent solution detected, discarding solution...')
+
     # write data to file
     data_tuple = (cur_iter,) + tuple(new_params) + tuple(average) + tuple(stdev) + (iter_end_time-record_time,)
     with open(averages_file, 'a') as file:
         file.write("\n%i,%f,%f,%f,%f,%f,%f,%f,%f,%f" %data_tuple)
-
-    # check invalid values
-    if average[0] > 1000:
-        raise ValueError('Divergent solution detected, discarding solution...')
 
     # add to data
     data_x = torch.cat([data_x, new_params.reshape(1,2)])
