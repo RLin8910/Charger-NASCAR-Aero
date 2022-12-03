@@ -118,6 +118,7 @@ def run_step(cur_iter, new_params, start_time, record_time, \
         print('Faking simulation...')
         # fake function which minimzes objective at param1 = 0.5, param2 = -0.25
         average = [1000*(new_params[0]-0.5)**2+400, 0, -800+1000*(new_params[1]+0.25)**2]
+        average[0] = 1200
         stdev = [0]*3
     else:
         # create new runtime directory
@@ -162,6 +163,10 @@ def run_step(cur_iter, new_params, start_time, record_time, \
     data_tuple = (cur_iter,) + tuple(new_params) + tuple(average) + tuple(stdev) + (iter_end_time-record_time,)
     with open(averages_file, 'a') as file:
         file.write("\n%i,%f,%f,%f,%f,%f,%f,%f,%f,%f" %data_tuple)
+
+    # check invalid values
+    if average[0] > 1000:
+        raise ValueError('Divergent solution detected, discarding solution...')
 
     # add to data
     data_x = torch.cat([data_x, new_params.reshape(1,2)])
