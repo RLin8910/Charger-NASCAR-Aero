@@ -160,7 +160,7 @@ def run_step(cur_iter, new_params, start_time, record_time, \
     print('Total time elapsed: %fs' %(iter_end_time-start_time,))
 
     # check invalid values
-    if average[0] > 1000:
+    if abs(average[0]) > 1000:
         raise ValueError('Divergent solution detected, discarding solution...')
 
     # write data to file
