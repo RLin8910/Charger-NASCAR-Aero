@@ -20,3 +20,5 @@ A search can be continued using `run.py` as long as the data file `data/averages
 Once the `averages.csv` file has been populated by data from `run.py`, running `pareto_front.py` will create a file with only points on the Pareto Front of the data set.
 ### Exporting Designs
 Individual designs from the design space can be exported using `export_model.py`. This script is designed to be run in a Blender context - follow the format `blender ./assets/design_space.blend -noaudio -b -P export_model.py -- PARAM1 PARAM2 EXPORT_PATH`. `PARAM1` and `PARAM2` are each in the range [-1,1].
+### Sample Data
+Sample data from the simulation of 302 designs within the space can be found in the [sample_data](./sample_data/) folder.
